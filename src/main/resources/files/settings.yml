@@ -1,0 +1,97 @@
+# Lucky Pillars Module Settings
+
+file_version: 2
+
+# Visual representation in menus
+menus:
+  vote:
+    item: DIAMOND
+
+waiting_items:
+  vote_settings:
+    enabled: true
+    material: NAME_TAG
+    slot: 1
+    display_name: "<aqua>Vote modifiers</aqua>"
+    lore:
+      - "<gray>Choose a game modifier.</gray>"
+
+votes:
+  defaults:
+    modifier: none
+
+game:
+  # Set to 0 to disable a time limit
+  time_limit_seconds: 0
+  # Interval in seconds to give random blocks to players
+  item_distribution_interval: 3
+
+spawn_protection:
+  # Seconds of fall damage immunity after the game starts
+  fall_damage_seconds: 5
+
+combat:
+  kill_regeneration:
+    # Health restored on eliminations (set to 0 to disable)
+    health: 6.0
+
+# Random block distribution during the game
+item_distribution:
+  enabled: true
+  # Materials that will never be selected for random block drops
+  block_blacklist:
+    - "BEDROCK"
+    - "TUFF_SLAB"
+    - "TUFF_STAIRS"
+    - "TUFF_WALL"
+    - "CHISELED_TUFF"
+    - "POLISHED_TUFF"
+    - "POLISHED_TUFF_SLAB"
+    - "POLISHED_TUFF_STAIRS"
+    - "POLISHED_TUFF_WALL"
+    - "TUFF_BRICKS"
+    - "TUFF_BRICK_SLAB"
+    - "TUFF_BRICK_STAIRS"
+    - "TUFF_BRICK_WALL"
+    - "CHISELED_TUFF_BRICKS"
+    - "CHISELED_COPPER"
+    - "EXPOSED_CHISELED_COPPER"
+    - "WEATHERED_CHISELED_COPPER"
+    - "OXIDIZED_CHISELED_COPPER"
+    - "WAXED_CHISELED_COPPER"
+    - "WAXED_EXPOSED_CHISELED_COPPER"
+    - "WAXED_WEATHERED_CHISELED_COPPER"
+    - "WAXED_OXIDIZED_CHISELED_COPPER"
+    - "COPPER_GRATE"
+    - "EXPOSED_COPPER_GRATE"
+    - "WEATHERED_COPPER_GRATE"
+    - "OXIDIZED_COPPER_GRATE"
+    - "WAXED_COPPER_GRATE"
+    - "WAXED_EXPOSED_COPPER_GRATE"
+    - "WAXED_WEATHERED_COPPER_GRATE"
+    - "WAXED_OXIDIZED_COPPER_GRATE"
+    - "COPPER_BULB"
+    - "EXPOSED_COPPER_BULB"
+    - "WEATHERED_COPPER_BULB"
+    - "OXIDIZED_COPPER_BULB"
+    - "WAXED_COPPER_BULB"
+    - "WAXED_EXPOSED_COPPER_BULB"
+    - "WAXED_WEATHERED_COPPER_BULB"
+    - "WAXED_OXIDIZED_COPPER_BULB"
+    - "TRIAL_SPAWNER"
+    - "TRIAL_KEY"
+    - "WEATHERED_COPPER_DOOR"
+    - "WAXED_WEATHERED_COPPER_DOOR"
+
+# Game items (optional)
+items:
+  # Items to give players on game start
+  # Format: MATERIAL:AMOUNT:SLOT
+  starting_items: []
+
+# Potion effects (optional)
+effects:
+  # Effects to give players during the game
+  # Format: EFFECT_TYPE:DURATION_TICKS:AMPLIFIER
+  starting_effects:
+    - "DAMAGE_RESISTANCE:60:1"

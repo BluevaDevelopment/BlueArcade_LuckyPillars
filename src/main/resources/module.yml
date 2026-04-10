@@ -1,0 +1,12 @@
+name: Lucky Pillars
+id: lucky_pillars
+version: ${revision}
+type: MINIGAME
+api-version: 3.3
+main: net.blueva.arcade.modules.lucky_pillars.LuckyPillarsModule
+
+authors:
+  - Blueva
+  - Whiron
+
+description: "Spawn on bedrock pillars, get random items, and be the last player standing."

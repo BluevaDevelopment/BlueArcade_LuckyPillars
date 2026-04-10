@@ -1,0 +1,145 @@
+# Lucky Pillars Module - English (UK)
+# Only Lucky Pillars-specific content
+
+file_version: 2
+display_name: "Lucky Pillars"
+
+description:
+  - "<dark_gray><strikethrough>----------------------------------------------</strikethrough></dark_gray>"
+  - "<green>Game</green> <gray>-</gray> <yellow><bold>Lucky Pillars</bold></yellow>"
+  - " "
+  - "<white>Description:</white>"
+  - "<gray>Spawn on bedrock pillars and receive random items.</gray>"
+  - "<gray>Use these items to eliminate opponents and survive.</gray>"
+  - " "
+  - "<dark_gray><strikethrough>----------------------------------------------</strikethrough></dark_gray>"
+
+# Vote menu
+vote_menu:
+  name: "<green>Lucky Pillars</green>"
+  lore:
+    - "<gray>Spawn on top of bedrock pillars.</gray>"
+    - "<gray>Get random items and eliminate opponents.</gray>"
+    - ""
+    - "<white>{votes}</white> <gray>votes.</gray>"
+
+votes:
+  labels:
+    modifiers:
+      none: "None"
+      elytra: "Elytra"
+      swap: "Swap Positions"
+      speed: "Speed"
+      slow_fall: "Slow Fall"
+      invisibility: "Invisibility"
+      double_health: "Double Health"
+      one_heart: "1 Heart"
+      unbreakable: "Unbreakable"
+      ultra_jump: "Ultra Jump"
+  messages:
+    broadcast: "<yellow>{player}</yellow> <gray>voted for</gray> <aqua>{modifier}</aqua>"
+    selected:
+      sources:
+        popular: "by popular vote"
+        default: "by default"
+      modifier: "<gray>Selected modifier:</gray> <gold>{modifier}</gold> <gray>{source}.</gray>"
+    invalid: "<red>That modifier is not available.</red>"
+    not_available: "<red>You can only vote while waiting for the game to start.</red>"
+    no_permission: "<red>You do not have permission to vote for</red> <yellow>{modifier}</yellow><red>.</red>"
+
+stats:
+
+  descriptions:
+    wins: "LuckyPillars victories"
+    games_played: "LuckyPillars matches played"
+    kills: "Opponents eliminated in LuckyPillars"
+  labels:
+    kills: "Eliminations"
+    games_played: "Lucky Pillars games played"
+    wins: "Lucky Pillars wins"
+
+messages:
+  eliminated: "<red>You are out! You are now a spectator.</red>"
+  out_of_bounds: "<yellow>You cannot leave the arena.</yellow>"
+  deaths:
+    killed_by_player:
+      - "<dark_red>✘</dark_red> <red>{victim}</red> <gray>was eliminated by</gray> <yellow>{killer}</yellow><gray>.</gray>"
+      - "<dark_red>✘</dark_red> <yellow>{killer}</yellow> <gray>outplayed</gray> <red>{victim}</red><gray>.</gray>"
+      - "<dark_red>✘</dark_red> <red>{victim}</red> <gray>fell to</gray> <yellow>{killer}</yellow><gray>'s attack.</gray>"
+      - "<dark_red>✘</dark_red> <yellow>{killer}</yellow> <gray>took down</gray> <red>{victim}</red><gray>.</gray>"
+    generic:
+      - "<dark_red>✘</dark_red> <red>{victim}</red> <gray>couldn't survive the chaos.</gray>"
+      - "<dark_red>✘</dark_red> <red>{victim}</red> <gray>was lost in the storm.</gray>"
+      - "<dark_red>✘</dark_red> <red>{victim}</red> <gray>was eliminated.</gray>"
+
+titles:
+  you_died:
+    title: "<red><bold>YOU DIED</bold></red>"
+    subtitle: "<gray>Back to the lobby.</gray>"
+  classified:
+    title: "<yellow><bold>ELIMINATED</bold></yellow>"
+    subtitle: "<gray>Your squad continues without you.</gray>"
+
+scoreboard:
+  solo_team_label: "Solo"
+  event:
+    none: "None"
+    none_time: "-"
+    now: "Now"
+  storm_status:
+    safe: "<green>Safe</green>"
+    unsafe: "<red>In Storm</red>"
+  storm_phase:
+    waiting: "<gray>Waiting</gray>"
+    final: "<red>Final</red>"
+  default:
+    title: "<bold><gradient:aqua:light_purple>Blue Arcade</gradient></bold>"
+    lines:
+      - ""
+      - "<white>Arena:</white> <aqua>{arena}</aqua>"
+      - "<white>Game:</white> <aqua>Lucky Pillars</aqua>"
+      - ""
+      - "<white>Team:</white> <yellow>{team}</yellow>"
+      - "<white>Teams Alive:</white> <green>{alive_teams}</green>"
+      - "<white>Players Alive:</white> <green>{alive}</green>"
+      - "<white>Your Kills:</white> <red>{kills}</red>"
+      - ""
+      - "<white>Next Block In:</white>"
+      - "<aqua>{next_block_time}</aqua>"
+      - ""
+      - "<yellow>www.blueva.net</yellow>"
+  solo:
+    title: "<bold><gradient:aqua:light_purple>Blue Arcade</gradient></bold>"
+    lines:
+      - ""
+      - "<white>Arena:</white> <aqua>{arena}</aqua>"
+      - "<white>Game:</white> <aqua>Lucky Pillars</aqua>"
+      - ""
+      - "<white>Players Alive:</white> <green>{alive}</green>"
+      - "<white>Your Kills:</white> <red>{kills}</red>"
+      - ""
+      - "<white>Next Block In:</white>"
+      - "<aqua>{next_block_time}</aqua>"
+      - ""
+      - "<yellow>www.blueva.net</yellow>"
+
+setup_messages:
+  team:
+    usage: "<red>Usage:</red> <yellow>/baa game <id> lucky_pillars team <count|size> <value></yellow>"
+    success: "<green>Team {setting} set to {value} for {game} in arena {arena_id}.</green>"
+    invalid_limit: "<red>Team configuration exceeds arena max players ({max_players}).</red>"
+    invalid_value: "<red>Team {setting} must be greater than 0.</red>"
+    invalid_count: "<red>Team count must be at least 2.</red>"
+    numeric_ids_only: "<red>Team ID must be a number between {min} and {max}.</red>"
+  team_spawn:
+    usage_add: "<red>Usage:</red> <yellow>/baa game <id> lucky_pillars team spawn add</yellow>"
+    usage_set: "<red>Usage:</red> <yellow>/baa game <id> lucky_pillars team spawn set <team_id></yellow>"
+    teams_not_configured: "<red>Team count is not configured yet. Set it first with <yellow>/baa game <id> lucky_pillars team count <n></yellow>.</red>"
+    added: "<green>Team spawn added for slot <white>{slot}/{count}</white> at your current location.</green>"
+    all_slots_filled: "<red>All {count} team spawn slots are already filled.</red>"
+    set: "<green>Team spawn set for team <white>{team}</white> at your current location.</green>"
+  region:
+    usage: "<red>Usage:</red> <yellow>/baa game <id> lucky_pillars region <set|clear></yellow>"
+    must_use_stick: "<red>Select two corners with the setup tool first.</red>"
+    set: "<green>Regeneration region saved.</green> <gray>Blocks:</gray> <white>{blocks}</white> <gray>({x}x{y}x{z})</gray>"
+    cleared: "<yellow>Regeneration region cleared.</yellow>"

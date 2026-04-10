@@ -1,0 +1,63 @@
+file_version: 1
+type: SIMPLE
+menuName: '<green>Lucky Pillars</green> <gray>-</gray> <yellow>Modifiers</yellow>'
+
+content:
+  - '<gray>Choose one modifier for this round.</gray>'
+
+buttons:
+  none:
+    text: '<gray>None</gray> <dark_gray>({votes_modifier_none})</dark_gray>'
+    image: 'https://blueva.net/api/menu/items/1_21_10/minecraft_barrier.png'
+    actions:
+      - 'MODULE;lucky_pillars;vote modifier none'
+  elytra:
+    text: '<aqua>Elytra</aqua> <dark_gray>({votes_modifier_elytra})</dark_gray>'
+    image: 'https://blueva.net/api/menu/items/1_21_10/minecraft_elytra.png'
+    actions:
+      - 'MODULE;lucky_pillars;vote modifier elytra'
+  swap:
+    text: '<light_purple>Swap Positions</light_purple> <dark_gray>({votes_modifier_swap})</dark_gray>'
+    image: 'https://blueva.net/api/menu/items/1_21_10/minecraft_ender_pearl.png'
+    actions:
+      - 'MODULE;lucky_pillars;vote modifier swap'
+  speed:
+    text: '<yellow>Speed</yellow> <dark_gray>({votes_modifier_speed})</dark_gray>'
+    image: 'https://blueva.net/api/menu/items/1_21_10/minecraft_clock.png'
+    actions:
+      - 'MODULE;lucky_pillars;vote modifier speed'
+  slow_fall:
+    text: '<white>Slow Fall</white> <dark_gray>({votes_modifier_slow_fall})</dark_gray>'
+    image: 'https://blueva.net/api/menu/items/1_21_10/minecraft_feather.png'
+    actions:
+      - 'MODULE;lucky_pillars;vote modifier slow_fall'
+  invisibility:
+    text: '<gray>Invisibility</gray> <dark_gray>({votes_modifier_invisibility})</dark_gray>'
+    image: 'https://blueva.net/api/menu/items/1_21_10/minecraft_potion.png'
+    actions:
+      - 'MODULE;lucky_pillars;vote modifier invisibility'
+  double_health:
+    text: '<gold>Double Health</gold> <dark_gray>({votes_modifier_double_health})</dark_gray>'
+    image: 'https://blueva.net/api/menu/items/1_21_10/minecraft_golden_apple.png'
+    actions:
+      - 'MODULE;lucky_pillars;vote modifier double_health'
+  one_heart:
+    text: '<red>1 Heart</red> <dark_gray>({votes_modifier_one_heart})</dark_gray>'
+    image: 'https://blueva.net/api/menu/items/1_21_10/minecraft_red_dye.png'
+    actions:
+      - 'MODULE;lucky_pillars;vote modifier one_heart'
+  unbreakable:
+    text: '<dark_gray>Unbreakable</dark_gray> <dark_gray>({votes_modifier_unbreakable})</dark_gray>'
+    image: 'https://blueva.net/api/menu/items/1_21_10/minecraft_obsidian.png'
+    actions:
+      - 'MODULE;lucky_pillars;vote modifier unbreakable'
+  ultra_jump:
+    text: '<green>Ultra Jump</green> <dark_gray>({votes_modifier_ultra_jump})</dark_gray>'
+    image: 'https://blueva.net/api/menu/items/1_21_10/minecraft_rabbit_foot.png'
+    actions:
+      - 'MODULE;lucky_pillars;vote modifier ultra_jump'
+  close:
+    text: '<red>Close</red>'
+    image: 'https://blueva.net/api/menu/items/1_21_10/minecraft_barrier.png'
+    actions:
+      - 'CLOSE'

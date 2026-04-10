@@ -1,0 +1,146 @@
+file_version: 1
+menuName: '<green>Lucky Pillars</green> <gray>-</gray> <yellow>Modifiers</yellow>'
+menuSize: 36
+type: CHEST
+
+items:
+  none:
+    slot: 10
+    name: '<gray>None</gray>'
+    itemStack:
+      material: BARRIER
+      amount: 1
+    lore:
+      - '<gray>No modifiers.</gray>'
+      - '<gray>Votes:</gray> <white>{votes_modifier_none}</white>'
+      - '<green>Click to vote</green>'
+    actions:
+      - 'MODULE;lucky_pillars;vote modifier none'
+
+  elytra:
+    slot: 11
+    name: '<aqua>Elytra</aqua>'
+    itemStack:
+      material: ELYTRA
+      amount: 1
+    lore:
+      - '<gray>All players get an elytra.</gray>'
+      - '<gray>Votes:</gray> <white>{votes_modifier_elytra}</white>'
+      - '<green>Click to vote</green>'
+    actions:
+      - 'MODULE;lucky_pillars;vote modifier elytra'
+
+  swap:
+    slot: 12
+    name: '<light_purple>Swap Positions</light_purple>'
+    itemStack:
+      material: ENDER_PEARL
+      amount: 1
+    lore:
+      - '<gray>Swap positions every 15 seconds.</gray>'
+      - '<gray>Votes:</gray> <white>{votes_modifier_swap}</white>'
+      - '<green>Click to vote</green>'
+    actions:
+      - 'MODULE;lucky_pillars;vote modifier swap'
+
+  speed:
+    slot: 13
+    name: '<yellow>Speed</yellow>'
+    itemStack:
+      material: CLOCK
+      amount: 1
+    lore:
+      - '<gray>Faster random block drops.</gray>'
+      - '<gray>Votes:</gray> <white>{votes_modifier_speed}</white>'
+      - '<green>Click to vote</green>'
+    actions:
+      - 'MODULE;lucky_pillars;vote modifier speed'
+
+  slow_fall:
+    slot: 14
+    name: '<white>Slow Fall</white>'
+    itemStack:
+      material: FEATHER
+      amount: 1
+    lore:
+      - '<gray>All players get slow falling.</gray>'
+      - '<gray>Votes:</gray> <white>{votes_modifier_slow_fall}</white>'
+      - '<green>Click to vote</green>'
+    actions:
+      - 'MODULE;lucky_pillars;vote modifier slow_fall'
+
+  invisibility:
+    slot: 15
+    name: '<gray>Invisibility</gray>'
+    itemStack:
+      material: POTION
+      amount: 1
+    lore:
+      - '<gray>All players are invisible for 30s.</gray>'
+      - '<gray>Votes:</gray> <white>{votes_modifier_invisibility}</white>'
+      - '<green>Click to vote</green>'
+    actions:
+      - 'MODULE;lucky_pillars;vote modifier invisibility'
+
+  double_health:
+    slot: 16
+    name: '<gold>Double Health</gold>'
+    itemStack:
+      material: GOLDEN_APPLE
+      amount: 1
+    lore:
+      - '<gray>Everyone starts with 20 hearts.</gray>'
+      - '<gray>Votes:</gray> <white>{votes_modifier_double_health}</white>'
+      - '<green>Click to vote</green>'
+    actions:
+      - 'MODULE;lucky_pillars;vote modifier double_health'
+
+  one_heart:
+    slot: 19
+    name: '<red>1 Heart</red>'
+    itemStack:
+      material: RED_DYE
+      amount: 1
+    lore:
+      - '<gray>Everyone plays with 1 heart.</gray>'
+      - '<gray>Votes:</gray> <white>{votes_modifier_one_heart}</white>'
+      - '<green>Click to vote</green>'
+    actions:
+      - 'MODULE;lucky_pillars;vote modifier one_heart'
+
+  unbreakable:
+    slot: 20
+    name: '<dark_gray>Unbreakable</dark_gray>'
+    itemStack:
+      material: OBSIDIAN
+      amount: 1
+    lore:
+      - '<gray>Blocks cannot be broken.</gray>'
+      - '<gray>Votes:</gray> <white>{votes_modifier_unbreakable}</white>'
+      - '<green>Click to vote</green>'
+    actions:
+      - 'MODULE;lucky_pillars;vote modifier unbreakable'
+
+  ultra_jump:
+    slot: 21
+    name: '<green>Ultra Jump</green>'
+    itemStack:
+      material: RABBIT_FOOT
+      amount: 1
+    lore:
+      - '<gray>Everyone jumps much higher.</gray>'
+      - '<gray>Votes:</gray> <white>{votes_modifier_ultra_jump}</white>'
+      - '<green>Click to vote</green>'
+    actions:
+      - 'MODULE;lucky_pillars;vote modifier ultra_jump'
+
+  close:
+    slot: 31
+    name: '<red>Close</red>'
+    itemStack:
+      material: BARRIER
+      amount: 1
+    lore:
+      - '<gray>Close this menu.</gray>'
+    actions:
+      - 'CLOSE'

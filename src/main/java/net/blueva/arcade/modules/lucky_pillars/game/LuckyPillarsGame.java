@@ -655,8 +655,8 @@ public class LuckyPillarsGame {
             if (player == null) {
                 continue;
             }
-            if (player.getAttribute(Attribute.MAX_HEALTH) != null) {
-                player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(20.0);
+            if (player.getAttribute(maxHealthAttribute()) != null) {
+                player.getAttribute(maxHealthAttribute()).setBaseValue(20.0);
             }
             player.setHealth(Math.min(player.getHealth(), 20.0));
         }
@@ -1013,8 +1013,8 @@ public class LuckyPillarsGame {
     private void applyDoubleHealthModifier(List<Player> players) {
         for (Player player : players) {
             if (player != null && player.isOnline()) {
-                if (player.getAttribute(Attribute.MAX_HEALTH) != null) {
-                    player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(40.0); // 20 hearts
+                if (player.getAttribute(maxHealthAttribute()) != null) {
+                    player.getAttribute(maxHealthAttribute()).setBaseValue(40.0); // 20 hearts
                     player.setHealth(40.0);
                 }
             }
@@ -1024,8 +1024,8 @@ public class LuckyPillarsGame {
     private void applyOneHeartModifier(List<Player> players) {
         for (Player player : players) {
             if (player != null && player.isOnline()) {
-                if (player.getAttribute(Attribute.MAX_HEALTH) != null) {
-                    player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(2.0); // 1 heart
+                if (player.getAttribute(maxHealthAttribute()) != null) {
+                    player.getAttribute(maxHealthAttribute()).setBaseValue(2.0); // 1 heart
                     player.setHealth(2.0);
                 }
             }
@@ -1193,4 +1193,11 @@ public class LuckyPillarsGame {
         }
     }
 
+    private Attribute maxHealthAttribute() {
+        try {
+            return Attribute.valueOf("MAX_HEALTH");
+        } catch (IllegalArgumentException ignored) {
+            return Attribute.valueOf("GENERIC_MAX_HEALTH");
+        }
+    }
 }

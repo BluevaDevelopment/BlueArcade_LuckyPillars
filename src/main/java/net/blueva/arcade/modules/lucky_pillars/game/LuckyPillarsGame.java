@@ -651,12 +651,13 @@ public class LuckyPillarsGame {
         if (players == null) {
             return;
         }
+        Attribute maxHealthAttribute = maxHealthAttribute();
         for (Player player : players) {
             if (player == null) {
                 continue;
             }
-            if (player.getAttribute(maxHealthAttribute()) != null) {
-                player.getAttribute(maxHealthAttribute()).setBaseValue(20.0);
+            if (maxHealthAttribute != null && player.getAttribute(maxHealthAttribute) != null) {
+                player.getAttribute(maxHealthAttribute).setBaseValue(20.0);
             }
             player.setHealth(Math.min(player.getHealth(), 20.0));
         }
@@ -1011,10 +1012,11 @@ public class LuckyPillarsGame {
     }
 
     private void applyDoubleHealthModifier(List<Player> players) {
+        Attribute maxHealthAttribute = maxHealthAttribute();
         for (Player player : players) {
             if (player != null && player.isOnline()) {
-                if (player.getAttribute(maxHealthAttribute()) != null) {
-                    player.getAttribute(maxHealthAttribute()).setBaseValue(40.0); // 20 hearts
+                if (maxHealthAttribute != null && player.getAttribute(maxHealthAttribute) != null) {
+                    player.getAttribute(maxHealthAttribute).setBaseValue(40.0); // 20 hearts
                     player.setHealth(40.0);
                 }
             }
@@ -1022,10 +1024,11 @@ public class LuckyPillarsGame {
     }
 
     private void applyOneHeartModifier(List<Player> players) {
+        Attribute maxHealthAttribute = maxHealthAttribute();
         for (Player player : players) {
             if (player != null && player.isOnline()) {
-                if (player.getAttribute(maxHealthAttribute()) != null) {
-                    player.getAttribute(maxHealthAttribute()).setBaseValue(2.0); // 1 heart
+                if (maxHealthAttribute != null && player.getAttribute(maxHealthAttribute) != null) {
+                    player.getAttribute(maxHealthAttribute).setBaseValue(2.0); // 1 heart
                     player.setHealth(2.0);
                 }
             }
@@ -1194,10 +1197,16 @@ public class LuckyPillarsGame {
     }
 
     private Attribute maxHealthAttribute() {
+        Attribute attribute = attributeConstant("MAX_HEALTH");
+        return attribute != null ? attribute : attributeConstant("GENERIC_MAX_HEALTH");
+    }
+
+    private Attribute attributeConstant(String fieldName) {
         try {
-            return Attribute.valueOf("MAX_HEALTH");
-        } catch (IllegalArgumentException ignored) {
-            return Attribute.valueOf("GENERIC_MAX_HEALTH");
+            Object value = Attribute.class.getField(fieldName).get(null);
+            return value instanceof Attribute attribute ? attribute : null;
+        } catch (ReflectiveOperationException ignored) {
+            return null;
         }
     }
 }

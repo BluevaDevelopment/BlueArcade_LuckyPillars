@@ -50,9 +50,6 @@ public class PlaceholderService {
 
             ArenaState state = game.getArenaState(context);
             if (state != null) {
-                placeholders.put("storm_radius", String.valueOf((int) Math.ceil(state.getStormRadius())));
-                placeholders.put("storm_stage", resolveStormPhaseLabel(state));
-                placeholders.put("storm_status", resolveStormStatus(player, state));
                 placeholders.put("next_event", resolveNextEventLabel(state));
                 placeholders.put("next_event_time", resolveNextEventTime(state));
                 placeholders.put("next_block_time", resolveNextBlockTime(state));
@@ -60,44 +57,6 @@ public class PlaceholderService {
         }
 
         return placeholders;
-    }
-
-    private String resolveStormStatus(Player player, ArenaState state) {
-        if (player == null || state == null) {
-            String safe = moduleConfig.getStringFrom("language.yml", "scoreboard.storm_status.safe");
-            return safe == null ? "" : safe;
-        }
-
-        if (!state.isStormActive() || state.getStormCenter() == null || state.getStormRadius() <= 0) {
-            String safe = moduleConfig.getStringFrom("language.yml", "scoreboard.storm_status.safe");
-            return safe == null ? "" : safe;
-        }
-
-        if (player.getWorld() == null || !player.getWorld().equals(state.getStormCenter().getWorld())) {
-            String safe = moduleConfig.getStringFrom("language.yml", "scoreboard.storm_status.safe");
-            return safe == null ? "" : safe;
-        }
-
-        double dx = player.getLocation().getX() - state.getStormCenter().getX();
-        double dz = player.getLocation().getZ() - state.getStormCenter().getZ();
-        double distanceSquared = (dx * dx) + (dz * dz);
-        double radius = state.getStormRadius();
-        if (distanceSquared <= radius * radius) {
-            String safe = moduleConfig.getStringFrom("language.yml", "scoreboard.storm_status.safe");
-            return safe == null ? "" : safe;
-        }
-
-        String unsafe = moduleConfig.getStringFrom("language.yml", "scoreboard.storm_status.unsafe");
-        return unsafe == null ? "" : unsafe;
-    }
-
-    private String resolveStormPhaseLabel(ArenaState state) {
-        if (state == null || !state.isStormActive()) {
-            String waiting = moduleConfig.getStringFrom("language.yml", "scoreboard.storm_phase.waiting");
-            return waiting == null ? "" : waiting;
-        }
-        String finalPhase = moduleConfig.getStringFrom("language.yml", "scoreboard.storm_phase.final");
-        return finalPhase == null ? "" : finalPhase;
     }
 
     private String resolveNextEventLabel(ArenaState state) {

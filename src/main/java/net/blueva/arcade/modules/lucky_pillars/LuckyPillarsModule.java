@@ -151,6 +151,7 @@ public class LuckyPillarsModule implements GameModule<Player, Location, World, M
             menuAPI.unregisterModuleMenuAPI(moduleInfo.getId());
         }
         if (itemAPI != null) {
+            itemAPI.unregisterWaitingItem("lucky_pillars_vote_settings");
             itemAPI.unregisterClickHandler("lucky_pillars_vote_settings");
         }
     }
@@ -179,7 +180,7 @@ public class LuckyPillarsModule implements GameModule<Player, Location, World, M
     }
 
     private void registerConfigs() {
-        moduleConfig.register("language.yml", 2);
+        moduleConfig.register("language.yml", 5);
         moduleConfig.register("settings.yml", 2);
         moduleConfig.register("achievements.yml", 1);
         moduleConfig.register("store.yml", 1);

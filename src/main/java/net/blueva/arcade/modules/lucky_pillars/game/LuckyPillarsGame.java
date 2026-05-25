@@ -785,7 +785,6 @@ public class LuckyPillarsGame {
             state.incrementMatchSeconds();
             handleScheduledEvents(context, state);
             refreshFallProtection(state, context.getPlayers(), fallProtectionSeconds);
-            // No storm in Lucky Pillars
 
             List<Player> alivePlayers = context.getAlivePlayers();
             List<Player> allPlayers = context.getPlayers();

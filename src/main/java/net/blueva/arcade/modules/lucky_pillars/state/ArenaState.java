@@ -6,7 +6,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.WorldBorder;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.block.Block;
@@ -39,14 +38,6 @@ public class ArenaState {
     private boolean ended;
     private int supplyTicks;
 
-    private double stormRadius;
-    private double stormMaxRadius;
-    private double stormFinalRadius;
-    private double stormDamagePerSecond;
-    private int stormShrinkDurationSeconds;
-    private Location stormCenter;
-    private int stormLightningTicks;
-    private boolean stormActive;
     private int matchSeconds;
     private volatile long nextBlockDropAtMillis = -1L;
 
@@ -54,8 +45,6 @@ public class ArenaState {
     private String selectedModifier = "none";
     private String selectedChestTier = "normal";
     private boolean blockBreakingDisabled = false;
-
-    private WorldBorder stormBorder;
 
     public ArenaState(GameContext<Player, Location, World, Material, ItemStack, Sound, Block, Entity> context) {
         this.context = context;
@@ -156,70 +145,6 @@ public class ArenaState {
 
     public Map<String, Long> getChestRefillTimes() {
         return new ConcurrentHashMap<>(chestRefillTimes);
-    }
-
-    public void setStormCenter(Location stormCenter) {
-        this.stormCenter = stormCenter;
-    }
-
-    public Location getStormCenter() {
-        return stormCenter;
-    }
-
-    public double getStormRadius() {
-        return stormRadius;
-    }
-
-    public void setStormRadius(double stormRadius) {
-        this.stormRadius = stormRadius;
-    }
-
-    public double getStormMaxRadius() {
-        return stormMaxRadius;
-    }
-
-    public void setStormMaxRadius(double stormMaxRadius) {
-        this.stormMaxRadius = stormMaxRadius;
-    }
-
-    public double getStormFinalRadius() {
-        return stormFinalRadius;
-    }
-
-    public void setStormFinalRadius(double stormFinalRadius) {
-        this.stormFinalRadius = stormFinalRadius;
-    }
-
-    public double getStormDamagePerSecond() {
-        return stormDamagePerSecond;
-    }
-
-    public void setStormDamagePerSecond(double stormDamagePerSecond) {
-        this.stormDamagePerSecond = stormDamagePerSecond;
-    }
-
-    public int getStormShrinkDurationSeconds() {
-        return stormShrinkDurationSeconds;
-    }
-
-    public void setStormShrinkDurationSeconds(int stormShrinkDurationSeconds) {
-        this.stormShrinkDurationSeconds = stormShrinkDurationSeconds;
-    }
-
-    public int incrementStormLightningTicks() {
-        return ++stormLightningTicks;
-    }
-
-    public void resetStormLightningTicks() {
-        stormLightningTicks = 0;
-    }
-
-    public boolean isStormActive() {
-        return stormActive;
-    }
-
-    public void setStormActive(boolean stormActive) {
-        this.stormActive = stormActive;
     }
 
     public int incrementMatchSeconds() {
@@ -326,14 +251,6 @@ public class ArenaState {
         }
 
         return (int) Math.ceil(millisRemaining / 1000.0D);
-    }
-
-    public WorldBorder getStormBorder() {
-        return stormBorder;
-    }
-
-    public void setStormBorder(WorldBorder stormBorder) {
-        this.stormBorder = stormBorder;
     }
 
     public void trackCageBlock(Location location, Material previousMaterial) {

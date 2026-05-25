@@ -9,6 +9,7 @@ import net.blueva.arcade.api.ui.LobbyItemDefinition;
 import net.blueva.arcade.api.ui.MenuAPI;
 import net.blueva.arcade.api.ui.MessageAPI;
 import net.blueva.arcade.api.ui.menu.MenuDefinition;
+import net.blueva.arcade.api.utils.PlayerUtil;
 import net.blueva.arcade.modules.lucky_pillars.game.LuckyPillarsGame;
 import net.blueva.arcade.modules.lucky_pillars.state.ArenaState;
 import net.blueva.arcade.modules.lucky_pillars.state.VoteState;
@@ -31,6 +32,7 @@ import java.util.Set;
 public class LuckyPillarsVoteService {
 
     private static final String VOTE_PERMISSION_BASE = "bluearcade.lucky_pillars.votes";
+    private static final String WAITING_ITEM_ID = "lucky_pillars_vote_settings";
     public static final String COMMAND = "lucky_pillarsvote";
     public static final String MENU_MODIFIERS = "vote_modifiers";
 
@@ -113,8 +115,8 @@ public class LuckyPillarsVoteService {
             return;
         }
 
-        boolean enabled = moduleConfig.getBoolean("waiting_items.vote_settings.enabled", true);
-        if (!enabled) {
+        if (!isWaitingItemEnabled()) {
+            unregisterWaitingItem();
             return;
         }
 
@@ -131,7 +133,7 @@ public class LuckyPillarsVoteService {
         List<String> lore = moduleConfig.getStringList("waiting_items.vote_settings.lore");
 
         LobbyItemDefinition<Material> definition = new LobbyItemDefinition<>(
-                "lucky_pillars_vote_settings",
+                WAITING_ITEM_ID,
                 material,
                 slot,
                 displayName,
@@ -144,8 +146,27 @@ public class LuckyPillarsVoteService {
     }
 
     public void registerClickHandler(LuckyPillarsGame game) {
-        itemAPI.registerClickHandler("lucky_pillars_vote_settings",
+        if (itemAPI == null) {
+            return;
+        }
+        if (!isWaitingItemEnabled()) {
+            itemAPI.unregisterClickHandler(WAITING_ITEM_ID);
+            return;
+        }
+        itemAPI.registerClickHandler(WAITING_ITEM_ID,
                 player -> game.handleVoteCommand(player, new String[]{"menu", "modifiers"}));
+    }
+
+    public void unregisterWaitingItem() {
+        if (itemAPI == null) {
+            return;
+        }
+        itemAPI.unregisterWaitingItem(WAITING_ITEM_ID);
+        itemAPI.unregisterClickHandler(WAITING_ITEM_ID);
+    }
+
+    private boolean isWaitingItemEnabled() {
+        return moduleConfig != null && moduleConfig.getBoolean("waiting_items.vote_settings.enabled", true);
     }
 
     public boolean handleVoteCommand(Player player,
@@ -202,8 +223,10 @@ public class LuckyPillarsVoteService {
             String modifierLabel = getModifierLabel(modifier);
             String message = moduleConfig.getStringFrom("language.yml", "votes.messages.broadcast");
             if (message != null && !message.isBlank()) {
+                int voteCount = voteState != null ? voteState.getVotes(modifier) : 0;
                 message = message.replace("{player}", player.getName())
-                        .replace("{modifier}", modifierLabel);
+                        .replace("{modifier}", modifierLabel)
+                        .replace("{votes}", String.valueOf(voteCount));
                 broadcastMessage(context, message);
             }
             return true;
@@ -241,7 +264,7 @@ public class LuckyPillarsVoteService {
             }
 
             waitingVoteState.castVote(player.getUniqueId(), modifier);
-            broadcastWaitingVote(player, modifier);
+            broadcastWaitingVote(player, modifier, waitingVoteState);
             return openMenuWaiting(player);
         }
 
@@ -288,7 +311,7 @@ public class LuckyPillarsVoteService {
         }
     }
 
-    private void broadcastWaitingVote(Player player, String modifier) {
+    private void broadcastWaitingVote(Player player, String modifier, VoteState voteState) {
         if (player == null || modifier == null) {
             return;
         }
@@ -298,12 +321,14 @@ public class LuckyPillarsVoteService {
             return;
         }
 
+        int voteCount = voteState != null ? voteState.getVotes(modifier) : 0;
         message = message.replace("{player}", player.getName())
-                .replace("{modifier}", getModifierLabel(modifier));
+                .replace("{modifier}", getModifierLabel(modifier))
+                .replace("{votes}", String.valueOf(voteCount));
 
         GameContext<Player, Location, World, Material, ItemStack, Sound, Block, Entity> context = getGameContext(player);
         if (context == null) {
-            sendWaitingBroadcast(player, message);
+            broadcastToWaitingArena(player, message);
             return;
         }
 
@@ -323,6 +348,37 @@ public class LuckyPillarsVoteService {
         }
 
         player.sendMessage(message);
+    }
+
+    private void broadcastToWaitingArena(Player sender, String message) {
+        if (sender == null || message == null || message.isBlank()) {
+            return;
+        }
+        @SuppressWarnings("unchecked")
+        PlayerUtil<Player> playerUtil = (PlayerUtil<Player>) ModuleAPI.getPlayerUtil();
+        if (playerUtil == null) {
+            return;
+        }
+        Integer senderArenaId = playerUtil.getPlayerArena(sender);
+        if (senderArenaId == null) {
+            return;
+        }
+        @SuppressWarnings("unchecked")
+        MessageAPI<Player> messagesAPI = (MessageAPI<Player>) ModuleAPI.getMessagesAPI();
+        for (Player online : org.bukkit.Bukkit.getOnlinePlayers()) {
+            if (online == null || !online.isOnline()) {
+                continue;
+            }
+            Integer onlineArenaId = playerUtil.getPlayerArena(online);
+            if (!senderArenaId.equals(onlineArenaId)) {
+                continue;
+            }
+            if (messagesAPI != null) {
+                messagesAPI.sendRaw(online, message);
+            } else {
+                online.sendMessage(message);
+            }
+        }
     }
 
     private GameContext<Player, Location, World, Material, ItemStack, Sound, Block, Entity> getGameContext(Player player) {

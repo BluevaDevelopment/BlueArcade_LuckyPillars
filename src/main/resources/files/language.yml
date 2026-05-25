@@ -1,7 +1,7 @@
 # Lucky Pillars Module - English (UK)
 # Only Lucky Pillars-specific content
 
-file_version: 3
+file_version: 5
 display_name: "Lucky Pillars"
 
 description:
@@ -37,7 +37,7 @@ votes:
       unbreakable: "Unbreakable"
       ultra_jump: "Ultra Jump"
   messages:
-    broadcast: "<yellow>{player}</yellow> <gray>voted for</gray> <aqua>{modifier}</aqua>"
+    broadcast: "<yellow>{player}</yellow> <gray>voted for</gray> <aqua>{modifier}</aqua> <yellow>({votes} votes)</yellow>"
     selected:
       sources:
         popular: "by popular vote"
@@ -69,7 +69,6 @@ messages:
       - "<dark_red>✘</dark_red> <yellow>{killer}</yellow> <gray>took down</gray> <red>{victim}</red><gray>.</gray>"
     generic:
       - "<dark_red>✘</dark_red> <red>{victim}</red> <gray>couldn't survive the chaos.</gray>"
-      - "<dark_red>✘</dark_red> <red>{victim}</red> <gray>was lost in the storm.</gray>"
       - "<dark_red>✘</dark_red> <red>{victim}</red> <gray>was eliminated.</gray>"
 
 titles:
@@ -86,12 +85,6 @@ scoreboard:
     none: "None"
     none_time: "-"
     now: "Now"
-  storm_status:
-    safe: "<green>Safe</green>"
-    unsafe: "<red>In Storm</red>"
-  storm_phase:
-    waiting: "<gray>Waiting</gray>"
-    final: "<red>Final</red>"
   default:
     title: "<bold><gradient:aqua:light_purple>Blue Arcade</gradient></bold>"
     lines:

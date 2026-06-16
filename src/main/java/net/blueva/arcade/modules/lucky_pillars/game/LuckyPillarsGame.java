@@ -742,7 +742,8 @@ public class LuckyPillarsGame {
                                        String teamId) {
         TeamsAPI<Player, Material> teamsAPI = context.getTeamsAPI();
         List<Player> players = new ArrayList<>();
-        for (Player player : context.getPlayers()) {
+        // Only alive players can receive podium positions/rewards.
+        for (Player player : context.getAlivePlayers()) {
             if (teamsAPI == null || !teamsAPI.isEnabled()) {
                 players.add(player);
                 continue;
@@ -1058,7 +1059,7 @@ public class LuckyPillarsGame {
     }
 
     /**
-     * Starts the random block distribution timer for Lucky Pillars.
+     * Starts the random item distribution timer for Lucky Pillars.
      */
     private void startItemDistribution(GameContext<Player, Location, World, Material, ItemStack, Sound, Block, Entity> context,
                                        ArenaState state) {
@@ -1089,15 +1090,15 @@ public class LuckyPillarsGame {
 
         state.setNextBlockDropAtMillis(System.currentTimeMillis() + 50L);
         context.getSchedulerAPI().runTimer(taskId, () -> {
-            distributeRandomBlock(context);
+            distributeRandomItem(context);
             state.setNextBlockDropAtMillis(System.currentTimeMillis() + intervalMillis);
         }, 1L, intervalTicks);
     }
 
     /**
-     * Distributes a random Minecraft block to all alive players.
+     * Distributes a random Minecraft item to all alive players.
      */
-    private void distributeRandomBlock(GameContext<Player, Location, World, Material, ItemStack, Sound, Block, Entity> context) {
+    private void distributeRandomItem(GameContext<Player, Location, World, Material, ItemStack, Sound, Block, Entity> context) {
         if (context == null || context.getPhase() != GamePhase.PLAYING) {
             return;
         }
@@ -1107,14 +1108,14 @@ public class LuckyPillarsGame {
             return;
         }
 
-        List<Material> candidates = buildRandomBlockCandidates();
+        List<Material> candidates = buildRandomItemCandidates();
         if (candidates.isEmpty()) {
             return;
         }
 
         for (Player player : alivePlayers) {
             if (player != null && player.isOnline()) {
-                ItemStack item = selectRandomBlockItem(candidates);
+                ItemStack item = selectRandomItem(candidates);
                 if (item == null || item.getType() == Material.AIR) {
                     continue;
                 }
@@ -1124,10 +1125,18 @@ public class LuckyPillarsGame {
     }
 
     /**
-     * Picks one random block material from all Minecraft materials excluding the configured blacklist.
+     * Builds the pool of random item candidates.
+     * <p>
+     * Any material that is a valid item is eligible, not just blocks. The pool is
+     * filtered by the configured blacklist and by a small hard-coded set of
+     * game-breaking or creative-only items (command blocks, spawn eggs, etc.).
+     * </p>
      */
-    private List<Material> buildRandomBlockCandidates() {
-        List<String> blacklistValues = moduleConfig.getStringList("item_distribution.block_blacklist");
+    private List<Material> buildRandomItemCandidates() {
+        List<String> blacklistValues = moduleConfig.getStringList("item_distribution.blacklist");
+        if (blacklistValues == null || blacklistValues.isEmpty()) {
+            blacklistValues = moduleConfig.getStringList("item_distribution.block_blacklist");
+        }
         Set<Material> blacklist = new HashSet<>();
 
         if (blacklistValues != null) {
@@ -1145,9 +1154,6 @@ public class LuckyPillarsGame {
 
         List<Material> candidates = new ArrayList<>();
         for (Material material : Material.values()) {
-            if (!material.isBlock()) {
-                continue;
-            }
             if (!material.isItem()) {
                 continue;
             }
@@ -1155,6 +1161,9 @@ public class LuckyPillarsGame {
                 continue;
             }
             if (blacklist.contains(material)) {
+                continue;
+            }
+            if (isHiddenOrCreativeItem(material)) {
                 continue;
             }
             candidates.add(material);
@@ -1168,9 +1177,28 @@ public class LuckyPillarsGame {
     }
 
     /**
-     * Picks one random block material from a prepared candidate list.
+     * Returns true for items that should never be given to players randomly,
+     * even if they are not in the configured blacklist.
      */
-    private ItemStack selectRandomBlockItem(List<Material> candidates) {
+    private boolean isHiddenOrCreativeItem(Material material) {
+        String name = material.name();
+        if (name.startsWith("LEGACY_") || name.endsWith("_SPAWN_EGG")) {
+            return true;
+        }
+        if (name.contains("COMMAND_BLOCK")) {
+            return true;
+        }
+        return switch (name) {
+            case "BARRIER", "LIGHT", "STRUCTURE_VOID", "STRUCTURE_BLOCK", "JIGSAW",
+                 "DEBUG_STICK", "KNOWLEDGE_BOOK", "END_PORTAL_FRAME", "END_GATEWAY" -> true;
+            default -> false;
+        };
+    }
+
+    /**
+     * Picks one random item from a prepared candidate list.
+     */
+    private ItemStack selectRandomItem(List<Material> candidates) {
         if (candidates == null || candidates.isEmpty()) {
             return null;
         }

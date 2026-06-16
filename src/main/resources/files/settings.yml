@@ -1,6 +1,6 @@
 # Lucky Pillars Module Settings
 
-file_version: 2
+file_version: 3
 
 # Visual representation in menus
 menus:
@@ -35,12 +35,29 @@ combat:
     # Health restored on eliminations (set to 0 to disable)
     health: 6.0
 
-# Random block distribution during the game
+# Random item distribution during the game
 item_distribution:
   enabled: true
-  # Materials that will never be selected for random block drops
-  block_blacklist:
+  # Materials that will never be selected for random item drops.
+  # The legacy key "block_blacklist" is still supported for backwards compatibility.
+  blacklist:
+    # Unbreakable / technical blocks
     - "BEDROCK"
+    - "BARRIER"
+    - "LIGHT"
+    - "STRUCTURE_VOID"
+    - "STRUCTURE_BLOCK"
+    - "JIGSAW"
+    - "END_PORTAL_FRAME"
+    - "END_GATEWAY"
+    # Command / creative-only items
+    - "COMMAND_BLOCK"
+    - "CHAIN_COMMAND_BLOCK"
+    - "REPEATING_COMMAND_BLOCK"
+    - "COMMAND_BLOCK_MINECART"
+    - "DEBUG_STICK"
+    - "KNOWLEDGE_BOOK"
+    # Decorative tuff / copper variants (usually not useful in this game)
     - "TUFF_SLAB"
     - "TUFF_STAIRS"
     - "TUFF_WALL"

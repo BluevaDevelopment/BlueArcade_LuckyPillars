@@ -102,8 +102,12 @@ public class OutcomeService {
     }
 
     private void handleNoWinner(GameContext<Player, Location, World, Material, ItemStack, Sound, Block, Entity> context) {
+        List<Player> candidates = context.getAlivePlayers();
+        if (candidates.isEmpty()) {
+            candidates = new ArrayList<>(context.getPlayers());
+        }
         List<Player> sortedByKills = placeholderService.getPlayersSortedByKills(
-                context, new ArrayList<>(context.getPlayers()), context.getPlayers().size());
+                context, candidates, candidates.size());
         if (sortedByKills.isEmpty()) {
             return;
         }

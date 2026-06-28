@@ -22,6 +22,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class LuckyPillarsListener implements Listener {
@@ -181,6 +182,11 @@ public class LuckyPillarsListener implements Listener {
 
         event.setCancelled(true);
         game.handleNonCombatDeath(context, target);
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        game.onPlayerQuit(event.getPlayer());
     }
 
     private Player resolveAttacker(Entity damager) {

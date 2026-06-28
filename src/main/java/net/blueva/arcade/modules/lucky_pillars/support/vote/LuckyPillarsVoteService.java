@@ -13,6 +13,7 @@ import net.blueva.arcade.api.utils.PlayerUtil;
 import net.blueva.arcade.modules.lucky_pillars.game.LuckyPillarsGame;
 import net.blueva.arcade.modules.lucky_pillars.state.ArenaState;
 import net.blueva.arcade.modules.lucky_pillars.state.VoteState;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -22,9 +23,13 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Simplified vote service for Lucky Pillars single modifier voting
@@ -46,7 +51,7 @@ public class LuckyPillarsVoteService {
     private final ItemAPI<Player, ItemStack, Material> itemAPI;
     private final String moduleId;
     private final LuckyPillarsVoteMenuRepository menuRepository;
-    private final VoteState waitingVoteState;
+    private final Map<Integer, VoteState> waitingVoteStates = new ConcurrentHashMap<>();
     private LuckyPillarsGame game;
 
     public LuckyPillarsVoteService(ModuleConfigAPI moduleConfig,
@@ -60,7 +65,6 @@ public class LuckyPillarsVoteService {
         this.menuRepository = new LuckyPillarsVoteMenuRepository(moduleConfig);
         this.menuRepository.loadMenus();
         registerMenusWithCore();
-        this.waitingVoteState = createVoteState();
     }
 
     /**
@@ -80,8 +84,54 @@ public class LuckyPillarsVoteService {
         return new VoteState(defaultModifier);
     }
 
-    public VoteState getWaitingVoteState() {
-        return waitingVoteState;
+    public VoteState getWaitingVoteState(int arenaId) {
+        return waitingVoteStates.computeIfAbsent(arenaId, id -> createVoteState());
+    }
+
+    public void clearWaitingVote(int arenaId, UUID playerId) {
+        VoteState state = waitingVoteStates.get(arenaId);
+        if (state == null) {
+            return;
+        }
+        state.clearPlayerVotes(playerId);
+        if (state.getVoterIds().isEmpty()) {
+            waitingVoteStates.remove(arenaId);
+        }
+    }
+
+    public void cleanStaleVotes() {
+        @SuppressWarnings("unchecked")
+        PlayerUtil<Player> playerUtil = (PlayerUtil<Player>) ModuleAPI.getPlayerUtil();
+        if (playerUtil == null) {
+            return;
+        }
+
+        for (Map.Entry<Integer, VoteState> entry : new ArrayList<>(waitingVoteStates.entrySet())) {
+            cleanStaleVotesForArena(entry.getValue(), entry.getKey());
+            if (entry.getValue().getVoterIds().isEmpty()) {
+                waitingVoteStates.remove(entry.getKey());
+            }
+        }
+    }
+
+    private void cleanStaleVotesForArena(VoteState state, int arenaId) {
+        @SuppressWarnings("unchecked")
+        PlayerUtil<Player> playerUtil = (PlayerUtil<Player>) ModuleAPI.getPlayerUtil();
+        if (playerUtil == null || state == null) {
+            return;
+        }
+
+        for (UUID playerId : new ArrayList<>(state.getVoterIds())) {
+            Player player = Bukkit.getPlayer(playerId);
+            if (player == null || !player.isOnline()) {
+                state.clearPlayerVotes(playerId);
+                continue;
+            }
+            Integer playerArena = playerUtil.getPlayerArena(player);
+            if (playerArena == null || playerArena != arenaId) {
+                state.clearPlayerVotes(playerId);
+            }
+        }
     }
 
     public void setGame(LuckyPillarsGame game) {
@@ -97,17 +147,20 @@ public class LuckyPillarsVoteService {
             return;
         }
 
+        int arenaId = state.getContext().getArenaId();
+        VoteState waiting = getWaitingVoteState(arenaId);
+        cleanStaleVotesForArena(waiting, arenaId);
+
         for (Player player : players) {
             if (player == null) {
                 continue;
             }
-            String modifier = waitingVoteState.getPlayerVote(player.getUniqueId());
+            String modifier = waiting.getPlayerVote(player.getUniqueId());
             if (modifier != null) {
                 voteState.castVote(player.getUniqueId(), modifier);
             }
-            waitingVoteState.clearPlayerVotes(player.getUniqueId());
         }
-        waitingVoteState.clearAll();
+        waitingVoteStates.remove(arenaId);
     }
 
     public void registerWaitingItem() {
@@ -218,16 +271,19 @@ public class LuckyPillarsVoteService {
                 return true;
             }
 
+            String previousVote = voteState.getPlayerVote(player.getUniqueId());
             voteState.castVote(player.getUniqueId(), modifier);
-            
-            String modifierLabel = getModifierLabel(modifier);
-            String message = moduleConfig.getStringFrom("language.yml", "votes.messages.broadcast");
-            if (message != null && !message.isBlank()) {
-                int voteCount = voteState != null ? voteState.getVotes(modifier) : 0;
-                message = message.replace("{player}", player.getName())
-                        .replace("{modifier}", modifierLabel)
-                        .replace("{votes}", String.valueOf(voteCount));
-                broadcastMessage(context, message);
+
+            if (!modifier.equals(previousVote)) {
+                String modifierLabel = getModifierLabel(modifier);
+                String message = moduleConfig.getStringFrom("language.yml", "votes.messages.broadcast");
+                if (message != null && !message.isBlank()) {
+                    int voteCount = voteState.getVotes(modifier);
+                    message = message.replace("{player}", player.getName())
+                            .replace("{modifier}", modifierLabel)
+                            .replace("{votes}", String.valueOf(voteCount));
+                    broadcastMessage(context, message);
+                }
             }
             return true;
         }
@@ -239,6 +295,14 @@ public class LuckyPillarsVoteService {
         if (player == null) {
             return false;
         }
+
+        Integer arenaId = getPlayerArenaId(player);
+        if (arenaId == null) {
+            return true;
+        }
+
+        VoteState waiting = getWaitingVoteState(arenaId);
+        cleanStaleVotesForArena(waiting, arenaId);
 
         String[] safeArgs = args != null ? args : new String[0];
         if (safeArgs.length == 0) {
@@ -263,8 +327,11 @@ public class LuckyPillarsVoteService {
                 return true;
             }
 
-            waitingVoteState.castVote(player.getUniqueId(), modifier);
-            broadcastWaitingVote(player, modifier, waitingVoteState);
+            String previousVote = waiting.getPlayerVote(player.getUniqueId());
+            waiting.castVote(player.getUniqueId(), modifier);
+            if (!modifier.equals(previousVote)) {
+                broadcastWaitingVote(player, modifier, waiting);
+            }
             return openMenuWaiting(player);
         }
 
@@ -394,7 +461,13 @@ public class LuckyPillarsVoteService {
     }
 
     private boolean openMenuWaiting(Player player) {
-        return openMenu(player, waitingVoteState, MENU_MODIFIERS);
+        Integer arenaId = getPlayerArenaId(player);
+        if (arenaId == null) {
+            return openMenu(player, createVoteState(), MENU_MODIFIERS);
+        }
+        VoteState waiting = getWaitingVoteState(arenaId);
+        cleanStaleVotesForArena(waiting, arenaId);
+        return openMenu(player, waiting, MENU_MODIFIERS);
     }
 
     private boolean openMenu(Player player, VoteState voteState, String menuId) {
@@ -424,18 +497,30 @@ public class LuckyPillarsVoteService {
 
     private String resolveWinningLabel(VoteState voteState) {
         String option = voteState != null ? voteState.resolveWinner() : null;
-        return getModifierLabel(option != null ? option : waitingVoteState.resolveWinner());
+        return getModifierLabel(option != null ? option : moduleConfig.getString("votes.defaults.modifier", "none"));
     }
 
     private String resolvePlayerVoteLabel(Player player, VoteState voteState) {
         if (player == null || voteState == null) {
-            return getModifierLabel(waitingVoteState.resolveWinner());
+            return getModifierLabel(moduleConfig.getString("votes.defaults.modifier", "none"));
         }
         String option = voteState.getPlayerVote(player.getUniqueId());
         if (option == null) {
-            option = waitingVoteState.resolveWinner();
+            option = voteState.resolveWinner();
         }
         return getModifierLabel(option);
+    }
+
+    private Integer getPlayerArenaId(Player player) {
+        if (player == null) {
+            return null;
+        }
+        @SuppressWarnings("unchecked")
+        PlayerUtil<Player> playerUtil = (PlayerUtil<Player>) ModuleAPI.getPlayerUtil();
+        if (playerUtil == null) {
+            return null;
+        }
+        return playerUtil.getPlayerArena(player);
     }
 
     private boolean isModifierValid(String modifier) {
